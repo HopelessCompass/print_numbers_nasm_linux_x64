@@ -21,19 +21,20 @@ print_number:
     jl .less
     jmp .space
     
+.cook_syswrite_registers:
+    mov rax, 1
+    mov rdi, 1
+    mov rdx, 1
+    ret
+ 
 .less:
     mov [temp], rdi
-    
-    mov rax, 1
-    mov rdi, 1
+    jmp .cook_syswrite_registers
     mov rsi, minus
-    mov rdx, 1
     syscall
     
-    mov rax, 1
-    mov rdi, 1
+    jmp .cook_syswrite_registers
     mov rsi, [temp]
-    mov rdx, 1
     syscall
     
     mov rdi, [temp]
