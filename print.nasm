@@ -3,8 +3,7 @@ global _start
 section .rodata
     
 section .data
-    x: dq 0
-    temp: dq 1
+    temp: dw ?
     minus: db '-', 0
     
 section .text
@@ -14,45 +13,57 @@ section .text
 ; RBX, RSP, RBP и R12–R15, 
 ; в соответствии со стандартном Linux 64-bit.
 
-print_number:
-    mov rax, 1          
-    mov [x], rdi
-    cmp rdi, 0
-    jl .less
-    jmp .space
-    
-.cook_syswrite_registers:
+cook_syswrite_registers:
     mov rax, 1
     mov rdi, 1
     mov rdx, 1
     ret
- 
-.less:
-    mov [temp], rdi
-    jmp .cook_syswrite_registers
-    mov rsi, minus
-    syscall
     
-    jmp .cook_syswrite_registers
-    mov rsi, [temp]
-    syscall
+print_positive_number:
+    mov [temp], di
+    add byte [temp], '0'
+    mov byte [temp + 1], ' '
     
-    mov rdi, [temp]
-    ret
-
-.space:
-    add byte [x], '0'
-    mov rsi, x
-    mov byte [rsi + 1], ' '
+    mov rax, 1
+    mov rsi, temp
     mov rdi, 1          
     mov rdx, 2          
     syscall
-    ret
+    
+    ret                  
 
+print_number:
+    mov [temp], di
+    
+    cmp rdi, 0
+    jl .less
+    call print_positive_number    ; x >= 0
+    ret
+    
+.less:
+    call cook_syswrite_registers
+    
+    mov rsi, minus
+    syscall
+    
+    movzx rax, word [temp]
+    mov rcx, -1
+    mul rcx
+    mov [temp], ax
+    add byte [temp], '0'
+    mov byte [temp + 1], ' '
+    mov rax, 1
+    mov rsi, temp
+    mov rdx, 2
+    syscall
+    
+    ret
+    
+; main
 _start:
-    mov rdi, 5
+    mov rdi, -1
     call print_number
-    mov rdi, -7
+    mov rdi, 7
     call print_number
     
 .exit:
