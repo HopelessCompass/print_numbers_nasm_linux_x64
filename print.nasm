@@ -5,7 +5,7 @@ section .rodata
 section .data
     x: dq 0
     temp: dq 1
-    minus: dq '-', 0
+    minus: db '-', 0
     
 section .text
 
