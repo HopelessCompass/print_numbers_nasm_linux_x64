@@ -37,7 +37,7 @@ print_number:
     
     cmp rdi, 0
     jl .less
-    call print_positive_number    ; x >= 0
+    call print_positive_number
     ret
     
 .less:
