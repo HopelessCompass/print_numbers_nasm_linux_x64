@@ -12,12 +12,6 @@ section .text
 ; Внутри функции запрещено менять регистры 
 ; RBX, RSP, RBP и R12–R15, 
 ; в соответствии со стандартном Linux 64-bit.
-
-cook_syswrite_registers:
-    mov rax, 1
-    mov rdi, 1
-    mov rdx, 1
-    ret
     
 print_positive_number:
     mov [temp], di
@@ -41,8 +35,9 @@ print_number:
     ret
     
 .less:
-    call cook_syswrite_registers
-    
+    mov rax, 1
+    mov rdi, 1
+    mov rdx, 1
     mov rsi, minus
     syscall
     
@@ -59,7 +54,6 @@ print_number:
     
     ret
     
-; main
 _start:
     mov rdi, -1
     call print_number
